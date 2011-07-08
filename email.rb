@@ -39,6 +39,10 @@ options[:subject] = opts[:subject] if opts[:subject]
 options[:body] = opts[:body] if opts[:body]
 options[:attachment] = opts[:attachment] if opts[:attachment]
 
+if ARGV[0] == "-"
+  options[:body] = ARGF.read
+end
+
 attachments = Hash[options[:attachment].
     map { |filename| [File.basename(filename), File.read(filename)] }]
 
