@@ -4,6 +4,8 @@ require "rubygems"
 require "pony"
 require "trollop"
 
+CONFIG_FILE = File.expand_path("~/.emailconfig")
+
 opts = Trollop::options do
   opt :from, "Sender's email address", :type => :string
   opt :to, "Receiver's email address", :type => :string
@@ -19,12 +21,15 @@ opts = Trollop::options do
 end
 
 # Read from config file
-options = Hash[IO.readlines("/Users/dmac/.email").
-  map { |line| line.split("=", 2).
-  map(&:strip) }.
-  select { |pair| pair.size == 2 }.
-  map { |k, v| [k.to_sym, v] }
-]
+options = {}
+if File.exist?(CONFIG_FILE)
+  options = Hash[IO.readlines(CONFIG_FILE).
+    map { |line| line.split("=", 2).
+    map(&:strip) }.
+    select { |pair| pair.size == 2 }.
+    map { |k, v| [k.to_sym, v] }
+  ]
+end
 
 # Override config with command line parameters
 options[:from] = opts[:from] if opts[:from]
